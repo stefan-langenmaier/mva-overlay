@@ -160,36 +160,36 @@ pkg_config() {
        RAILS_ENV="${RAILS_ENV}" bundle install --path ./vendor/bundle ${without}
        RAILS_ENV="${RAILS_ENV}" bundle update
        chown "${REDMINE_USER}":"${REDMINE_GROUP}" -R ./vendor/bundle
-#       if [ -e "${EPREFIX}${REDMINE_DIR}/config/initializers/session_store.rb" ] ; then
-#		einfo
-#		einfo "Upgrade database."
-#		einfo
-#
-#		einfo "Migrate database."
-#               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake db:migrate || die
-#		einfo "Upgrade the plugin migrations."
-#               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake redmine:plugins || die
-#		einfo "Clear the cache and the existing sessions."
-#               ${RUBY} -S bundle exec rake tmp:cache:clear || die
-#               ${RUBY} -S bundle exec rake tmp:sessions:clear || die
-#	else
-#		einfo
-#		einfo "Initialize database."
-#		einfo
-#
-#		einfo "Generate a session store secret."
-#               ${RUBY} -S bundle exec rake generate_secret_token || die
-#		einfo "Create the database structure."
-#               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake db:migrate || die
+       if [ -e "${ROOT}${EPREFIX}${REDMINE_DIR}/config/initializers/session_store.rb" ] ; then
+		einfo
+		einfo "Upgrade database."
+		einfo
+
+		einfo "Migrate database."
+               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake db:migrate || die
+		einfo "Upgrade the plugin migrations."
+               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake redmine:plugins || die
+		einfo "Clear the cache and the existing sessions."
+               ${RUBY} -S bundle exec rake tmp:cache:clear || die
+               ${RUBY} -S bundle exec rake tmp:sessions:clear || die
+	else
+		einfo
+		einfo "Initialize database."
+		einfo
+
+		einfo "Generate a session store secret."
+               ${RUBY} -S bundle exec rake generate_secret_token || die
+		einfo "Create the database structure."
+               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake db:migrate || die
 #		einfo "Insert default configuration data in database."
 #               RAILS_ENV="${RAILS_ENV}" ${RUBY} -S bundle exec rake redmine:load_default_data || die
                if use sqlite3; then
                        einfo
                        einfo "Please do not forget to change the ownership of the sqlite files."
                        einfo
-                       einfo "# cd \"${EPREFIX}${REDMINE_DIR}\""
+                       einfo "# cd \"${ROOT}${EPREFIX}${REDMINE_DIR}\""
                        einfo "# chown "${REDMINE_USER}:${REDMINE_GROUP}" db/ db/*.sqlite3"
                        einfo
                fi
-#	fi
+	fi
 }
